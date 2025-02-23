@@ -17,7 +17,7 @@ void HttpConnection::Start()
 						  {
 							  if ( err )
 							  {
-								  logger.Log( Logger::EnumLevel::Error, "http read error({})", err.what() );
+								  logger.Log( Logger::EnumLevel::Error, "http read error" );
 								  return;
 							  }
 
@@ -68,18 +68,18 @@ void HttpConnection::HandleRequest()
 			response.set( http::field::content_type, "text/plain" );
 			beast::ostream( response.body() ) << "url not found\r\n";
 
-			Respond();
+			WriteResponse();
 			return;
 		}
 
 		// other parts are delegated to HandleGet()
 		response.result( http::status::ok );
 		response.set( http::field::server, "GateServer" );
-		Respond();
+		WriteResponse();
 	}
 }
 
-void HttpConnection::Respond()
+void HttpConnection::WriteResponse()
 { 
 	auto self = shared_from_this();
 
@@ -93,3 +93,86 @@ void HttpConnection::Respond()
 						   self->timer_timeout.cancel();
 					   } );
 }
+
+std::string HttpConnection::EncodeUrl( const std::string& raw )
+{
+	std::ostringstream oss_encoded;
+
+	for ( char ch : raw )
+	{
+		// only directly input alpha, num, and some common chars
+		if ( std::isalnum( ch ) 
+			 || ch == '-' || ch == '_' || ch == '.' || ch == '~' )
+		{
+			oss_encoded << ch;
+		}
+		else
+		{
+			oss_encoded 
+				<< '%' << std::uppercase << std::hex 
+				<< static_cast<int>( static_cast<std::uint8_t>( ch ) );
+		}
+	}
+
+	return oss_encoded.str();
+}
+
+std::string HttpConnection::DecodeUrl( const std::string& url )
+{
+	std::ostringstream oss_decoded;
+
+	for ( std::size_t i = 0; i < url.size(); i ++ )
+	{
+		char ch{};
+
+		switch ( url[ i ] )
+		{
+			case '%':
+			{
+				std::string hex = url.substr( i + 1, 2 );
+				ch = static_cast<char>( std::stoul( hex, nullptr, 16 ) );
+				
+				i++; // skip two chars after '%'
+
+				break;
+			}
+
+			case '+':
+			{
+				ch = ' ';
+				break;
+			}
+		
+			default:
+			{
+				ch = url[ i ];
+				break;
+			}
+		}
+
+		oss_decoded << ch;
+	}
+
+	return oss_decoded.str();
+}
+
+std::string HttpConnection::ConvertToUtf8( const std::string& str )
+{
+	return boost::locale::conv::to_utf<char>( str, "UTF_8" );
+}
+
+std::string HttpConnection::EncodeUrlUtf8( const std::string& utf8_str )
+{
+	std::string url_str;
+	uri::encode( utf8_str.begin(), utf8_str.end(), url_str.begin() );
+	return url_str;
+}
+
+std::string HttpConnection::DecodeUrlUtf8( const std::string& url )
+{
+	std::string utf8_str;
+	uri::decode( url.begin(), url.end(), utf8_str.begin() );
+	return utf8_str;
+}
+
+

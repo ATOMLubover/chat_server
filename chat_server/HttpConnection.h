@@ -2,6 +2,8 @@
 
 #include "global.h"
 
+#include <cstdint>
+
 class LogicSystem;
 
 class HttpConnection
@@ -18,7 +20,14 @@ private:
 	void CheckTimeout(); // check whether is connection timeout
 
 	void HandleRequest();
-	void Respond();
+	void WriteResponse();
+
+	std::string EncodeUrl( const std::string& raw );
+	std::string DecodeUrl( const std::string& url );
+
+	std::string ConvertToUtf8( const std::string& str );
+	std::string EncodeUrlUtf8( const std::string& utf8_str );
+	std::string DecodeUrlUtf8( const std::string& url );
 
 private:
 	tcp::socket socket;
