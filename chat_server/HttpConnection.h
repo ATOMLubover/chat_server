@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "global.h"
 
@@ -25,9 +25,7 @@ private:
 	std::string EncodeUrl( const std::string& raw );
 	std::string DecodeUrl( const std::string& url );
 
-	std::string ConvertToUtf8( const std::string& str );
-	std::string EncodeUrlUtf8( const std::string& utf8_str );
-	std::string DecodeUrlUtf8( const std::string& url );
+	void PreparseGetParams();
 
 private:
 	tcp::socket socket;
@@ -37,4 +35,7 @@ private:
 	http::response<http::dynamic_body> response;
 
 	net::steady_timer timer_timeout{ socket.get_executor(), std::chrono::seconds( 20 ) }; // timeout when wait for 20 sec
+
+	std::string get_url; // route of entire url 
+	std::map<std::string, std::string> get_params;
 };

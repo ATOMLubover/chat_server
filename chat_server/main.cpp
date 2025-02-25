@@ -1,8 +1,12 @@
-#include "Server.h"
+﻿#include "Server.h"
 #include "global.h"
+
+#include <Windows.h>
 
 int main( int argc, char* argv[] )
 {
+	SetConsoleOutputCP( CP_UTF8 );
+
 	try
 	{
 		net::io_context ioc{ 1 };

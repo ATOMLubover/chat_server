@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "global.h"
 
@@ -15,6 +15,9 @@ public:
 
 	void RegisterGet( const std::string& name_handler, HttpHandler handler );
 	bool HandleGet( const std::string& url, std::shared_ptr<HttpConnection> connection );
+
+	void RegisterPost( const std::string& name_handler, HttpHandler handler );
+	bool HandlePost( const std::string& url, std::shared_ptr<HttpConnection> connection );
 
 private:
 	LogicSystem();

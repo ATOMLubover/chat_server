@@ -1,4 +1,4 @@
-#include "HttpConnection.h"
+﻿#include "HttpConnection.h"
 
 #include "LogicSystem.h"
 
@@ -7,7 +7,7 @@ HttpConnection::HttpConnection( tcp::socket&& socket )
 { }
 
 void HttpConnection::Start()
-{ 
+{
 	auto self = shared_from_this();
 
 	http::async_read( socket, buf_recv, request,
@@ -31,7 +31,7 @@ void HttpConnection::Start()
 						  }
 						  catch ( std::exception& e )
 						  {
-							  logger.Log( Logger::EnumLevel::Warning, 
+							  logger.Log( Logger::EnumLevel::Warning,
 										  "exception({}) occured at HttpConnection Start() callback",
 										  e.what() );
 						  }
@@ -39,7 +39,7 @@ void HttpConnection::Start()
 }
 
 void HttpConnection::CheckTimeout()
-{ 
+{
 	auto self = shared_from_this();
 
 	timer_timeout.async_wait( [self] ( beast::error_code err )
@@ -54,18 +54,21 @@ void HttpConnection::CheckTimeout()
 }
 
 void HttpConnection::HandleRequest()
-{ 
+{
 	response.version( request.version() );
 	response.keep_alive( false ); // short connection
 
+	// GET method
 	if ( request.method() == http::verb::get )
 	{
-		bool is_successful 
-			= LogicSystem::GetInstance()->HandleGet( request.target(), shared_from_this() );
+		PreparseGetParams();
+
+		bool is_successful
+			= LogicSystem::GetInstance()->HandleGet( get_url, shared_from_this() );
 		if ( !is_successful )
 		{
 			response.result( http::status::not_found );
-			response.set( http::field::content_type, "text/plain" );
+			response.set( http::field::content_type, "text/plain; charset=utf-8" );
 			beast::ostream( response.body() ) << "url not found\r\n";
 
 			WriteResponse();
@@ -80,7 +83,7 @@ void HttpConnection::HandleRequest()
 }
 
 void HttpConnection::WriteResponse()
-{ 
+{
 	auto self = shared_from_this();
 
 	response.content_length( response.body().size() );
@@ -101,15 +104,19 @@ std::string HttpConnection::EncodeUrl( const std::string& raw )
 	for ( char ch : raw )
 	{
 		// only directly input alpha, num, and some common chars
-		if ( std::isalnum( ch ) 
+		if ( std::isalnum( ch )
 			 || ch == '-' || ch == '_' || ch == '.' || ch == '~' )
 		{
 			oss_encoded << ch;
 		}
+		else if ( ch == ' ' )
+		{
+			oss_encoded << '+';
+		}
 		else
 		{
-			oss_encoded 
-				<< '%' << std::uppercase << std::hex 
+			oss_encoded
+				<< '%' << std::uppercase << std::hex
 				<< static_cast<int>( static_cast<std::uint8_t>( ch ) );
 		}
 	}
@@ -121,7 +128,7 @@ std::string HttpConnection::DecodeUrl( const std::string& url )
 {
 	std::ostringstream oss_decoded;
 
-	for ( std::size_t i = 0; i < url.size(); i ++ )
+	for ( std::size_t i = 0; i < url.size(); i++ )
 	{
 		char ch{};
 
@@ -131,8 +138,8 @@ std::string HttpConnection::DecodeUrl( const std::string& url )
 			{
 				std::string hex = url.substr( i + 1, 2 );
 				ch = static_cast<char>( std::stoul( hex, nullptr, 16 ) );
-				
-				i++; // skip two chars after '%'
+
+				i += 2; // skip two chars after '%'
 
 				break;
 			}
@@ -142,7 +149,7 @@ std::string HttpConnection::DecodeUrl( const std::string& url )
 				ch = ' ';
 				break;
 			}
-		
+
 			default:
 			{
 				ch = url[ i ];
@@ -156,23 +163,44 @@ std::string HttpConnection::DecodeUrl( const std::string& url )
 	return oss_decoded.str();
 }
 
-std::string HttpConnection::ConvertToUtf8( const std::string& str )
+void HttpConnection::PreparseGetParams()
 {
-	return boost::locale::conv::to_utf<char>( str, "UTF_8" );
+	auto uri = request.target();
+
+	auto query_pos = uri.find( '?' );
+	if ( query_pos == std::string::npos ) {
+		get_url = uri;
+		return;
+	}
+
+	get_url = uri.substr( 0, query_pos );
+	std::string query_string = uri.substr( query_pos + 1 );
+	query_string += "&"; // add "&" to simplify the check conditions
+
+	std::string key, val;
+	std::size_t pos_equal = 0;
+	std::size_t pos_amper = 0;
+	std::size_t pos_last_amper = 0;
+	while ( pos_amper < query_string.size() )
+	{
+		if ( query_string[ pos_equal ] != '=' )
+			pos_equal++;
+
+		auto Parse
+			= [&key, &val, &query_string, this] (
+				std::size_t begin, std::size_t pos_equal, std::size_t end )
+			{
+				key = DecodeUrl( query_string.substr( begin, pos_equal - begin ) );
+				val = DecodeUrl( query_string.substr( pos_equal + 1, end - pos_equal - 1 ) );
+				get_params[ key ] = val;
+			};
+		if ( query_string[ pos_amper ] == '&' )
+		{
+			Parse( pos_last_amper, pos_equal, pos_amper );
+
+			pos_equal = pos_amper + 1;
+			pos_last_amper = pos_amper + 1;
+		}
+		pos_amper++;
+	}
 }
-
-std::string HttpConnection::EncodeUrlUtf8( const std::string& utf8_str )
-{
-	std::string url_str;
-	uri::encode( utf8_str.begin(), utf8_str.end(), url_str.begin() );
-	return url_str;
-}
-
-std::string HttpConnection::DecodeUrlUtf8( const std::string& url )
-{
-	std::string utf8_str;
-	uri::decode( url.begin(), url.end(), utf8_str.begin() );
-	return utf8_str;
-}
-
-

@@ -1,3 +1,31 @@
 ///// log starts /////
-[02-22 19:08:45][ERROR]: http read error(end of stream [beast.http:1 at D:\code_resources\thirdparty\boost_debug\boost\beast\http\impl\read.hpp:241:21 in function 'void __cdecl boost::beast::http::detail::read_some_op<class boost::asio::basic_stream_socket<class boost::asio::ip::tcp,class boost::asio::any_io_executor>,class boost::beast::basic_flat_buffer<class std::allocator<char> >,1>::operator ()<class boost::asio::detail::composed_op<class boost::beast::http::detail::read_some_op<class boost::asio::basic_stream_socket<class boost::asio::ip::tcp,class boost::asio::any_io_executor>,class boost::beast::basic_flat_buffer<class std::allocator<char> >,1>,struct boost::asio::detail::composed_work<void __cdecl(class boost::asio::any_io_executor)>,class boost::asio::detail::composed_op<class boost::beast::http::detail::read_op<class boost::asio::basic_stream_socket<class boost::asio::ip::tcp,class boost::asio::any_io_executor>,class boost::beast::basic_flat_buffer<class std::allocator<char> >,1,struct boost::beast::http::detail::parser_is_done>,struct boost::asio::detail::composed_work<void __cdecl(class boost::asio::any_io_executor)>,class boost::beast::http::detail::read_msg_op<class boost::asio::basic_stream_socket<class boost::asio::ip::tcp,class boost::asio::any_io_executor>,class boost::beast::basic_flat_buffer<class std::allocator<char> >,1,struct boost::beast::http::basic_dynamic_body<class boost::beast::basic_multi_buffer<class std::allocator<char> > >,class std::allocator<char>,class `public: void __cdecl HttpConnection::Start(void)'::`2'::<lambda_1> >,void __cdecl(class boost::system::error_code,unsigned __int64)>,void __cdecl(class boost::system::error_code,unsigned __int64)>>(class boost::asio::detail::composed_op<class boost::beast::http::detail::read_some_op<class boost::asio::basic_stream_socket<class boost::asio::ip::tcp,class boost::asio::any_io_executor>,class boost::beast::basic_flat_buffer<class std::allocator<char> >,1>,struct boost::asio::detail::composed_work<void __cdecl(class boost::asio::any_io_executor)>,class boost::asio::detail::composed_op<class boost::beast::http::detail::read_op<class boost::asio::basic_stream_socket<class boost::asio::ip::tcp,class boost::asio::any_io_executor>,class boost::beast::basic_flat_buffer<class std::allocator<char> >,1,struct boost::beast::http::detail::parser_is_done>,struct boost::asio::detail::composed_work<void __cdecl(class boost::asio::any_io_executor)>,class boost::beast::http::detail::read_msg_op<class boost::asio::basic_stream_socket<class boost::asio::ip::tcp,class boost::asio::any_io_executor>,class boost::beast::basic_flat_buffer<class std::allocator<char> >,1,struct boost::beast::http::basic_dynamic_body<class boost::beast::basic_multi_buffer<class std::allocator<char> > >,class std::allocator<char>,class `public: void __cdecl HttpConnection::Start(void)'::`2'::<lambda_1> >,void __cdecl(class boost::system::error_code,unsigned __int64)>,void __cdecl(class boost::system::error_code,unsigned __int64)> &,class boost::system::error_code,unsigned __int64)'])
+[02-24 22:31:00][INFO]: http read successful
+[02-24 22:31:01][INFO]: http read successful
 ///// log starts /////
+[02-24 23:08:29][INFO]: http read successful
+///// log starts /////
+[02-24 23:09:46][INFO]: http read successful
+///// log starts /////
+[02-24 23:18:01][INFO]: http read successful
+///// log starts /////
+[02-24 23:18:53][INFO]: http read successful
+///// log starts /////
+[02-24 23:20:41][INFO]: http read successful
+///// log starts /////
+[02-24 23:30:00][INFO]: http read successful
+///// log starts /////
+[02-24 23:30:58][INFO]: http read successful
+///// log starts /////
+[02-25 17:35:50][INFO]: http read successful
+[02-25 17:35:50][INFO]: http read successful
+[02-25 17:36:58][ERROR]: http read error
+///// log starts /////
+///// log starts /////
+[02-25 17:44:51][INFO]: http read successful
+[02-25 17:44:58][INFO]: http read successful
+///// log starts /////
+[02-25 17:57:16][INFO]: http read successful
+///// log starts /////
+[02-25 18:01:09][INFO]: http read successful
+///// log starts /////
+[02-25 18:02:56][INFO]: http read successful

@@ -30,7 +30,8 @@ void Server::Start()
 							   }
 							   catch ( std::exception& e )
 							   {
-								   logger.Log( Logger::EnumLevel::Warning, "exception occured at Server Start()" );
+								   logger.Log( Logger::EnumLevel::Warning, 
+											   "exception occured at Server Start({})", e.what() );
 							   }
 						   } );
 }

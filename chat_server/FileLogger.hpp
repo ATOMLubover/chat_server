@@ -7,6 +7,7 @@
 #include <string>
 #include <sstream>
 #include <exception>
+#include <iostream>
 #include <iomanip>
 #include <memory>
 #include <format>
