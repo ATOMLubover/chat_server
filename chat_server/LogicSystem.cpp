@@ -25,7 +25,13 @@ void LogicSystem::RegisterPost( const std::string& name_handler, HttpHandler han
 
 bool LogicSystem::HandlePost( const std::string& url, std::shared_ptr<HttpConnection> connection )
 {
-	return false;
+	auto iter_handler = post_handlers.find( url );
+
+	if ( iter_handler == post_handlers.end() )
+		return false;
+
+	iter_handler->second( connection );
+	return true;
 }
 
 LogicSystem::LogicSystem()
@@ -51,27 +57,43 @@ LogicSystem::LogicSystem()
 					 }
 				 } );
 
-	RegisterPost( "/post_test",
+	RegisterPost( "/get_verification_code",
 				  [] ( std::shared_ptr<HttpConnection> connection )
 				  {
-					  auto body_str = beast::buffers_to_string( connection->request.body().data() );
-					  std::cout << "recv body is: " << body_str << std::endl;
+					  auto str_body = beast::buffers_to_string( connection->request.body().data() );
+					  std::cout << "recv body is: " << str_body << std::endl;
 
+					  // recieves a json, returns a json string
 					  connection->response.set( http::field::content_type, "text/json" );
+					  JSON json_res;
 
-					  JSON json_body = JSON::parse( body_str );
-					  bool is_success = !json_body.is_null();
+					  JSON json_body = JSON::parse( str_body );
 
-					  if ( !is_success )
+					  if ( json_body.is_null() )
 					  {
 						  std::cout << "json parse failed" << std::endl;
 
-						  JSON json_res;
 						  json_res[ "Error" ] = ErrorCode::Error_Json;
-						  std::string str_res = json_res.dump( 4 );
-						  beast::ostream( connection->response.body() ) << str_res;
+						  beast::ostream( connection->response.body() ) << json_res.dump();
 
 						  return true; // not enough to throw false
 					  }
+
+					  if ( !json_body.contains( "email" ) )
+					  {
+						  std::cout << "json 'email' not found" << std::endl;
+
+						  json_res[ "Error" ] = ErrorCode::Error_Json;
+						  beast::ostream( connection->response.body() ) << json_res.dump();
+
+						  return true; // not enough to throw false
+					  }
+
+					  auto email = json_body[ "email" ].get<std::string>();
+					  json_res[ "error" ] = ErrorCode::Success;
+
+					  beast::ostream( connection->response.body() ) << json_res.dump();
+
+					  return true;
 				  } );
 }
