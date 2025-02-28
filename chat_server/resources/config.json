@@ -1,0 +1,4 @@
+{
+    "port_gate_server": "8080",
+    "port_verify_client": "50051"
+}

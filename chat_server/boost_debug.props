@@ -5,7 +5,7 @@
   <PropertyGroup>
     <IncludePath>D:\code_resources\thirdparty\json_nlohmann;D:\code_resources\thirdparty\boost_debug;$(IncludePath)</IncludePath>
     <LibraryPath>D:\code_resources\thirdparty\boost_debug\lib;$(LibraryPath)</LibraryPath>
-    <_PropertySheetDisplayName>boost_debug</_PropertySheetDisplayName>
+    <_PropertySheetDisplayName>boost_dev_debug</_PropertySheetDisplayName>
   </PropertyGroup>
   <ItemDefinitionGroup />
   <ItemGroup />

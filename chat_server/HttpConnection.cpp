@@ -17,7 +17,8 @@ void HttpConnection::Start()
 						  {
 							  if ( err )
 							  {
-								  logger.Log( Logger::EnumLevel::Error, "http read error" );
+								  // logger.Log( Logger::EnumLevel::Error, "http read error" );
+								  std::cout << "http read error" << std::endl;
 								  return;
 							  }
 
@@ -27,13 +28,15 @@ void HttpConnection::Start()
 							  self->HandleRequest();
 							  self->CheckTimeout();
 
-							  logger.Log( Logger::EnumLevel::Info, "http read successful" );
+							  // logger.Log( Logger::EnumLevel::Info, "http read successful" );
+							  std::cout << "http read successful" << std::endl;
 						  }
 						  catch ( std::exception& e )
 						  {
-							  logger.Log( Logger::EnumLevel::Warning,
-										  "exception({}) occured at HttpConnection Start() callback",
-										  e.what() );
+							  //logger.Log( Logger::EnumLevel::Warning,
+									//	  "exception({}) occured at HttpConnection Start() callback",
+									//	  e.what() );
+							  std::cout << "exception occured at HttpConnection Start() callback" << std::endl;
 						  }
 					  } );
 }
@@ -48,7 +51,8 @@ void HttpConnection::CheckTimeout()
 								  {
 									  self->socket.close();
 
-									  logger.Log( Logger::EnumLevel::Error, "timeout at connetion" );
+									  // Dlogger.Log( Logger::EnumLevel::Error, "timeout at connetion" );
+									  std::cout << "timeout at connection" << std::endl;
 								  }
 							  } );
 }

@@ -1,6 +1,8 @@
 #pragma once
 
-#include "Singleton.h"
+
+// 全局头文件
+// 包含所有常用的工具头文件和透传的枚举类等
 
 // boost libs
 #include <boost/beast/http.hpp>
@@ -16,7 +18,6 @@
 #include <functional>
 #include <map>
 #include <string>
-#include <fstream>
 #include <iomanip>
 #include <sstream>
 #include <cctype>
@@ -28,14 +29,4 @@ namespace net = boost::asio;				// from <boost/asio.hpp>
 
 using tcp = boost::asio::ip::tcp;			// from <boost/asio/ip/tcp.hpp>
 
-using JSON = nlohmann::json;
-
-enum class EnumErrorCode : std::int32_t
-{
-	Success,
-	Error_Json = 1001,
-	Error_RPC = 1002
-};
-
-extern std::string port_gate_server;
-extern std::string port_verify_client;
+using JSON = nlohmann::json;				// from <json.hpp>

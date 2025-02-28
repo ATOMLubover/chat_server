@@ -3,9 +3,25 @@
 
 #include <Windows.h>
 
+void LoadConfig()
+{
+	std::ifstream ifs_config( "resources/config.json" );
+	std::ostringstream oss_config;
+	oss_config << ifs_config.rdbuf();
+	std::string str_config;
+	str_config = oss_config.str();
+
+	JSON json_config = JSON::parse( str_config );
+
+	port_gate_server = json_config[ "port_gate_server" ].get<std::string>();
+	port_verify_client = json_config[ "port_verify_client" ].get<std::string>();
+}
+
 int main( int argc, char* argv[] )
 {
 	SetConsoleOutputCP( CP_UTF8 );
+
+	LoadConfig();
 
 	try
 	{
@@ -28,8 +44,9 @@ int main( int argc, char* argv[] )
 	}
 	catch ( std::exception& e )
 	{
-		logger.Log( hatsuiki::SyncFileLogger::EnumLevel::Warning,
-					"exception({}) occured at main", e.what() );
+		//logger.Log( hatsuiki::SyncFileLogger::EnumLevel::Warning,
+		//			"exception({}) occured at main", e.what() );
+		std::cout << "exception occurred at main" << std::endl;
 		return EXIT_FAILURE;
 	}
 

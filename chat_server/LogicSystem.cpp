@@ -1,6 +1,7 @@
 ﻿#include "LogicSystem.h"
 
 #include "HttpConnection.h"
+#include "VerifyGrpcClient.h"
 
 void LogicSystem::RegisterGet( const std::string& name_handler, HttpHandler handler )
 {
@@ -73,7 +74,8 @@ LogicSystem::LogicSystem()
 					  {
 						  std::cout << "json parse failed" << std::endl;
 
-						  json_res[ "Error" ] = ErrorCode::Error_Json;
+						  json_res[ "Error" ] = EnumErrorCode::Error_Json;
+						  json_res.emplace( JSON{ "email", json_body[ "email" ].get<std::string>() } );
 						  beast::ostream( connection->response.body() ) << json_res.dump();
 
 						  return true; // not enough to throw false
@@ -83,14 +85,20 @@ LogicSystem::LogicSystem()
 					  {
 						  std::cout << "json 'email' not found" << std::endl;
 
-						  json_res[ "Error" ] = ErrorCode::Error_Json;
+						  json_res[ "Error" ] = EnumErrorCode::Error_Json;
+						  json_res.emplace( JSON{ "email", json_body[ "email" ].get<std::string>() } );
 						  beast::ostream( connection->response.body() ) << json_res.dump();
 
 						  return true; // not enough to throw false
 					  }
 
 					  auto email = json_body[ "email" ].get<std::string>();
-					  json_res[ "error" ] = ErrorCode::Success;
+					  // make VerificationClient to send vericode
+					  GetVerifyResponse veri_response 
+						  = VerifyGrpcClient::GetInstance()->GetVerificationCode( email );
+
+					  json_res[ "error" ] = veri_response.error();
+					  json_res.emplace( JSON{ "email", json_body[ "email" ].get<std::string>() } );
 
 					  beast::ostream( connection->response.body() ) << json_res.dump();
 

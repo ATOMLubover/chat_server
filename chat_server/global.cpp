@@ -1,3 +1,4 @@
 #include "global.h"
 
-hatsuiki::SyncFileLogger logger( "log.txt" );
+std::string port_gate_server = "8080";
+std::string port_verify_client = "50051";
