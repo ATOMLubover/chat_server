@@ -11,8 +11,7 @@ public:
 	void Start();
 
 private:
-	net::io_context& ioc;			// bottom dispatcher, ref in order to keep uniqueness
+	net::io_context& ioc;	 // ÓÃÓÚ Start() µÄ io_context
 
 	tcp::acceptor acceptor;
-	tcp::socket socket;
 };

@@ -12,9 +12,11 @@ class HttpConnection
 	friend class LogicSystem;
 
 public:
-	HttpConnection( tcp::socket&& socket );
+	HttpConnection( boost::asio::io_context& ioc );
 
 	void Start();
+
+	tcp::socket& GetSocket() { return socket; }
 
 private:
 	void CheckTimeout(); // check whether is connection timeout

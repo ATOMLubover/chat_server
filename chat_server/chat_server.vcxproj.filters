@@ -39,6 +39,9 @@
     <ClCompile Include="message.pb.cc">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="AsioIoContextPool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Server.h">
@@ -63,6 +66,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="message.pb.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="AsioIoContextPool.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

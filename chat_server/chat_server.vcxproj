@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AsioIoContextPool.cpp" />
     <ClCompile Include="global.cpp" />
     <ClCompile Include="HttpConnection.cpp" />
     <ClCompile Include="LogicSystem.cpp" />
@@ -141,6 +142,7 @@
     <ClCompile Include="VerifyGrpcClient.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AsioIoContextPool.h" />
     <ClInclude Include="global.h" />
     <ClInclude Include="FileLogger.hpp" />
     <ClInclude Include="LogicSystem.h" />
