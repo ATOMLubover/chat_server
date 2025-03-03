@@ -15,7 +15,7 @@ void Server::Start()
 	auto& io_context = AsioIoContextPool::GetInstance()->GetIoService();
 	std::shared_ptr<HttpConnection> connection = std::make_shared<HttpConnection>( io_context );
 	acceptor.async_accept( connection->GetSocket(),
-						   [self, &connection] ( beast::error_code err )
+						   [self, connection] ( beast::error_code err )
 						   {
 							   try
 							   {
@@ -33,8 +33,6 @@ void Server::Start()
 							   }
 							   catch ( std::exception& e )
 							   {
-								   //logger.Log( Logger::EnumLevel::Warning, 
-											//   "exception occured at Server Start({})", e.what() );
 								   std::cout << "exception occurred at Server Start() callback" << std::endl;
 							   }
 						   } );

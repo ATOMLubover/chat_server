@@ -1,6 +1,7 @@
 #pragma once
 
 #include "global.h"
+#include "RpcConnectionPool.h"
 
 #include <grpcpp/grpcpp.h>
 #include "message.grpc.pb.h"
@@ -24,5 +25,5 @@ private:
 	VerifyGrpcClient();
 
 private:
-	std::unique_ptr<VerifyService::Stub> stub;
+	RpcConnectionPool connection_pool;
 };

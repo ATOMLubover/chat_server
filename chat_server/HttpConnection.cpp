@@ -17,7 +17,6 @@ void HttpConnection::Start()
 						  {
 							  if ( err )
 							  {
-								  // logger.Log( Logger::EnumLevel::Error, "http read error" );
 								  std::cout << "http read error" << std::endl;
 								  return;
 							  }

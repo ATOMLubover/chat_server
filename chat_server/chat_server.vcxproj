@@ -138,6 +138,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="message.grpc.pb.cc" />
     <ClCompile Include="message.pb.cc" />
+    <ClCompile Include="RpcConnectionPool.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="VerifyGrpcClient.cpp" />
   </ItemGroup>
@@ -148,6 +149,7 @@
     <ClInclude Include="LogicSystem.h" />
     <ClInclude Include="message.grpc.pb.h" />
     <ClInclude Include="message.pb.h" />
+    <ClInclude Include="RpcConnectionPool.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="VerifyGrpcClient.h" />
