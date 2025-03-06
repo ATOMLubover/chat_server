@@ -2,15 +2,17 @@
 
 RpcConnectionPool::~RpcConnectionPool()
 {
-	std::lock_guard<std::mutex> guard( mtx_coonnections );
-	Close();
+	std::lock_guard<std::mutex> guard( mtx_connections );
+
+	ClosePool();
 	if ( connections.empty() )
 		connections.pop(); // 由于是智能指针，所以弹出后不用手动校徽
 }
 
 std::unique_ptr<message::VerifyService::Stub> RpcConnectionPool::TakeConnection()
 {
-	std::unique_lock<std::mutex> lock( mtx_coonnections );
+	std::unique_lock<std::mutex> lock( mtx_connections );
+
 	// 此处决定线程是否挂起并释放锁：若连接池不空或者连接池已经停止
 	cv.wait( lock,
 			 [this] () // 返回 true 时保留锁并向下执行
@@ -31,7 +33,8 @@ std::unique_ptr<message::VerifyService::Stub> RpcConnectionPool::TakeConnection(
 
 void RpcConnectionPool::ReturnConnection( std::unique_ptr<message::VerifyService::Stub>&& connection )
 {
-	std::lock_guard<std::mutex> guard( mtx_coonnections );
+	std::lock_guard<std::mutex> guard( mtx_connections );
+
 	// 当连接池已经停止，则没必要重新再回收到 connections 中
 	if ( is_stopped )
 		return;
@@ -40,7 +43,7 @@ void RpcConnectionPool::ReturnConnection( std::unique_ptr<message::VerifyService
 	cv.notify_one(); // 如果有线程在等待取用，则有一个幸运儿可以获得
 }
 
-void RpcConnectionPool::Close()
+void RpcConnectionPool::ClosePool()
 {
 	is_stopped = true;
 	cv.notify_all();

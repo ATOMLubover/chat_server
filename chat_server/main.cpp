@@ -17,9 +17,41 @@ void LoadConfig()
 	port_verify_client = json_config[ "port_verify_client" ].get<std::string>();
 }
 
+#include <cassert>
+#include "RedisManager.h"
+using namespace std;
+
+void TestRedisManager()
+{
+	assert( RedisManager::GetInstance()->Connect( "127.0.0.1", "6380" ) );
+	assert( RedisManager::GetInstance()->Authorize( "248313" ) );
+	assert( RedisManager::GetInstance()->Set( "blogwebsite", "llfc.club" ) );
+	std::string value = "";
+	assert( RedisManager::GetInstance()->Get( "blogwebsite", &value ) );
+	assert( RedisManager::GetInstance()->Get( "nonekey", &value ) == false );
+	assert( RedisManager::GetInstance()->HashSet( "bloginfo", "blogwebsite", "llfc.club" ) );
+	std::string val;
+	RedisManager::GetInstance()->HashGet( "bloginfo", "blogwebsite", &val );
+	assert( val != "" );
+	assert( RedisManager::GetInstance()->IsKeyExisting( "bloginfo" ) );
+	assert( RedisManager::GetInstance()->Delete( "bloginfo" ) );
+	assert( RedisManager::GetInstance()->Delete( "bloginfo" ) );
+	assert( RedisManager::GetInstance()->IsKeyExisting( "bloginfo" ) == false );
+	assert( RedisManager::GetInstance()->LeftPush( "lpushkey1", "lpushvalue1" ) );
+	assert( RedisManager::GetInstance()->LeftPush( "lpushkey1", "lpushvalue2" ) );
+	assert( RedisManager::GetInstance()->LeftPush( "lpushkey1", "lpushvalue3" ) );
+	assert( RedisManager::GetInstance()->RightPop( "lpushkey1", &value ) );
+	assert( RedisManager::GetInstance()->RightPop( "lpushkey1", &value ) );
+	assert( RedisManager::GetInstance()->LeftPop( "lpushkey1", &value ) );
+	assert( RedisManager::GetInstance()->LeftPop( "lpushkey2", &value ) == false );
+	RedisManager::GetInstance()->Close();
+}
+
 int main( int argc, char* argv[] )
 {
 	SetConsoleOutputCP( CP_UTF8 );
+
+	TestRedisManager();
 
 	LoadConfig();
 

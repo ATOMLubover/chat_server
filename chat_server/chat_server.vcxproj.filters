@@ -45,6 +45,15 @@
     <ClCompile Include="RpcConnectionPool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="RedisManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RedisConnectionPool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Server.h">
@@ -77,8 +86,31 @@
     <ClInclude Include="RpcConnectionPool.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="RedisManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RedisConnectionPool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RedisReply.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RedisContext.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\config.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="cserver.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include "Singleton.h"
-
 #include <grpcpp/grpcpp.h>
 #include "message.grpc.pb.h"
 
@@ -11,7 +9,7 @@
 #include <memory>
 #include <condition_variable>
 
-// 作为成员变量使用，而非管理类
+// 作为成员变量使用，而非管理类（内置锁）
 class RpcConnectionPool
 {
 public:
@@ -24,12 +22,12 @@ public:
 	void ReturnConnection( std::unique_ptr<message::VerifyService::Stub>&& connection );
 
 private:
-	void Close();
+	void ClosePool();
 
 private:
 	std::atomic<bool> is_stopped;
 	std::condition_variable cv;
-	std::mutex mtx_coonnections;
+	std::mutex mtx_connections;
 	
 	std::string host;
 	std::string port;

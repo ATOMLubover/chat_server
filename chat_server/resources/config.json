@@ -1,4 +1,13 @@
 {
-    "port_gate_server": "8080",
-    "port_verify_client": "50051"
+    "gate_server": {
+        "port": "8080"
+    },
+    "verify_server": {
+        "port": "50051"
+    },
+    "redis": {
+        "host": "127.0.0.1",
+        "port": "6380",
+        "password": "248313"
+    }
 }
