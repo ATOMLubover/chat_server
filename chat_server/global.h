@@ -36,6 +36,3 @@ enum class EnumErrorCode : std::int32_t
 	Error_Json = 1001,
 	Error_RPC = 1002
 };
-
-extern std::string port_gate_server;
-extern std::string port_verify_client;

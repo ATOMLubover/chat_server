@@ -4,7 +4,7 @@
 #include <sstream>
 #include <iostream>
 
-const std::string ConfigManager::CONFIG_PATH = "./resources/config.ini";
+const std::string ConfigManager::CONFIG_PATH = "./resources/config.json";
 
 ConfigManager::ConfigManager()
 {
@@ -16,7 +16,7 @@ ConfigManager::ConfigManager()
 		return;
 	}
 
-	std::string str_config( std::istreambuf_iterator<char>( ifs_config ), std::istreambuf_iterator<char>() );
+	std::string str_config = std::string( std::istreambuf_iterator<char>( ifs_config ), std::istreambuf_iterator<char>() );
 	json_config = JSON::parse( str_config );
 
 	ifs_config.close();

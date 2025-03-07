@@ -1,5 +1,7 @@
 #include "VerifyGrpcClient.h"
 
+#include "ConfigManager.h"
+
 GetVerifyResponse VerifyGrpcClient::GetVerificationCode( const std::string& email )
 {
 	ClientContext context;
@@ -22,5 +24,5 @@ GetVerifyResponse VerifyGrpcClient::GetVerificationCode( const std::string& emai
 }
 
 VerifyGrpcClient::VerifyGrpcClient()
-	: connection_pool( 3, "127.0.0.1", port_verify_client )
+	: connection_pool( 3, "127.0.0.1", ConfigManager::GetInstance()->GetValue( "verify_server", "port" ) )
 { }

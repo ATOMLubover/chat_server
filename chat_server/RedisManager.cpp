@@ -378,7 +378,7 @@ RedisManager::RedisManager()
 	std::string host = ConfigManager::GetInstance()->GetValue( "redis", "host" );
 	std::string port = ConfigManager::GetInstance()->GetValue( "redis", "port" );
 	std::string pwd = ConfigManager::GetInstance()->GetValue( "redis", "password" );
-	connection_pool = std::make_unique< RedisConnectionPool>( 5, host, port, pwd );
+	connection_pool.reset( new RedisConnectionPool( 5, host, port, pwd ) );
 }
 
 // 传送字符串形式的内容

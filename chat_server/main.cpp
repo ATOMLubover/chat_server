@@ -3,28 +3,12 @@
 
 #include <Windows.h>
 
-void LoadConfig()
-{
-	std::ifstream ifs_config( "resources/config.json" );
-	std::ostringstream oss_config;
-	oss_config << ifs_config.rdbuf();
-	std::string str_config;
-	str_config = oss_config.str();
-
-	JSON json_config = JSON::parse( str_config );
-
-	port_gate_server = json_config[ "port_gate_server" ].get<std::string>();
-	port_verify_client = json_config[ "port_verify_client" ].get<std::string>();
-}
-
 #include <cassert>
 #include "RedisManager.h"
 using namespace std;
 
 void TestRedisManager()
 {
-	assert( RedisManager::GetInstance()->Connect( "127.0.0.1", "6380" ) );
-	assert( RedisManager::GetInstance()->Authorize( "248313" ) );
 	assert( RedisManager::GetInstance()->Set( "blogwebsite", "llfc.club" ) );
 	std::string value = "";
 	assert( RedisManager::GetInstance()->Get( "blogwebsite", &value ) );
@@ -52,8 +36,6 @@ int main( int argc, char* argv[] )
 	SetConsoleOutputCP( CP_UTF8 );
 
 	TestRedisManager();
-
-	LoadConfig();
 
 	try
 	{

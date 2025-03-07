@@ -24,7 +24,7 @@ RedisConnectionPool::RedisConnectionPool(
 		}
 		std::cout << "auth seccessfully on " << port << ":" << port << std::endl;
 
-		connections.push( std::move( context ) );
+		connections.emplace( context.Release() );
 	}
 }
 
@@ -53,9 +53,9 @@ RedisContext::RawRedisContext* RedisConnectionPool::TakeConnection()
 	if ( is_stopped )
 		return nullptr;
 
-	auto context = std::move( connections.front() );
+	RedisContext::RawRedisContext* context = connections.front().Release();
 	connections.pop();
-	return context.GetContext();
+	return context;
 }
 
 void RedisConnectionPool::ReturnConnection( RedisContext::RawRedisContext* context )
@@ -65,7 +65,7 @@ void RedisConnectionPool::ReturnConnection( RedisContext::RawRedisContext* conte
 	if ( is_stopped )
 		return;
 
-	connections.push( std::move( RedisContext( context ) ) );
+	connections.emplace( context );
 	cv.notify_one();
 }
 

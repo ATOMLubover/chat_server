@@ -10,13 +10,10 @@ public:
 
 public:
 	RedisContext( RawRedisContext* context)
-		: context( context)
+		: context( context )
 	{ }
-	RedisContext( RedisContext&& rhs ) noexcept
-	{
-		context = rhs.context;
-		rhs.context = nullptr;
-	}
+	RedisContext( RedisContext&& rhs ) 
+		= delete;
 	~RedisContext()
 	{
 		if ( context )
@@ -26,6 +23,13 @@ public:
 	RawRedisContext* GetContext()
 	{
 		return context;
+	}
+
+	RawRedisContext* Release()
+	{
+		RawRedisContext* con = context;
+		context = nullptr;
+		return con;
 	}
 
 	explicit operator bool()
