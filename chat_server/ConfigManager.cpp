@@ -19,6 +19,10 @@ ConfigManager::ConfigManager()
 	std::string str_config = std::string( std::istreambuf_iterator<char>( ifs_config ), std::istreambuf_iterator<char>() );
 	json_config = JSON::parse( str_config );
 
+	std::cout
+		<< "config loaded:" << std::endl
+		<< json_config.dump( 4 ) << std::endl;
+
 	ifs_config.close();
 }
 
