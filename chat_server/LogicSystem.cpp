@@ -2,6 +2,8 @@
 
 #include "HttpConnection.h"
 #include "VerifyGrpcClient.h"
+#include "RedisManager.h"
+#include "ConfigManager.h"
 
 void LogicSystem::RegisterGet( const std::string& name_handler, HttpHandler handler )
 {
@@ -74,7 +76,7 @@ LogicSystem::LogicSystem()
 					  {
 						  std::cout << "json parse failed" << std::endl;
 
-						  json_res[ "Error" ] = EnumErrorCode::Error_Json;
+						  json_res[ "Error" ] = EnumErrorCode::ErrorJson;
 						  json_res.emplace( JSON{ "email", json_body[ "email" ].get<std::string>() } );
 						  beast::ostream( connection->response.body() ) << json_res.dump();
 
@@ -85,7 +87,7 @@ LogicSystem::LogicSystem()
 					  {
 						  std::cout << "json 'email' not found" << std::endl;
 
-						  json_res[ "Error" ] = EnumErrorCode::Error_Json;
+						  json_res[ "Error" ] = EnumErrorCode::ErrorJson;
 						  json_res.emplace( JSON{ "email", json_body[ "email" ].get<std::string>() } );
 						  beast::ostream( connection->response.body() ) << json_res.dump();
 
@@ -102,6 +104,64 @@ LogicSystem::LogicSystem()
 
 					  beast::ostream( connection->response.body() ) << json_res.dump();
 
+					  return true;
+				  } );
+
+	RegisterPost( "/user_register",
+				  [] ( std::shared_ptr<HttpConnection> connection )
+				  {
+					  std::string str_body = boost::beast::buffers_to_string( connection->request.body().data() );
+					  std::cout << "receive body is " << str_body << std::endl;
+
+					  connection->response.set( http::field::content_type, "text/json" );
+
+					  JSON json_body = JSON::parse( str_body );
+					  if ( json_body.is_null() ) {
+						  std::cout << "Failed to parse JSON data!" << std::endl;
+						  JSON json_res;
+						  json_res.emplace( "error", EnumErrorCode::ErrorJson );
+						  beast::ostream( connection->response.body() ) << json_res.dump();
+
+						  return true;
+					  }
+
+					  // 先查找 redis 中 email 对应的验证码是否合理
+					  std::string code_prefix 
+						  = ConfigManager::GetInstance()->GetValue( "const", "code_prefix" );
+					  std::string verify_code;
+					  bool is_verification_gotton 
+						  = RedisManager::GetInstance()->Get(
+							  code_prefix + json_body[ "email" ].get<std::string>(), 
+							  &verify_code );
+					  if ( !is_verification_gotton ) {
+						  std::cout << " get varify code expired" << std::endl;
+						  JSON json_res;
+						  json_res.emplace( "error", EnumErrorCode::ErrorRedisExpired );
+						  beast::ostream( connection->response.body() ) << json_res.dump();
+
+						  return true;
+					  }
+
+					  // 如果 redis 中的验证码与客户端传过来的不相同
+					  if ( verify_code != json_body[ "verify_code" ].get<std::string>() ) {
+						  std::cout << " verify code error" << std::endl;
+						  JSON json_res;
+						  json_res.emplace( "error", (int) EnumErrorCode::ErrorVerify );
+						  beast::ostream( connection->response.body() ) << json_res.dump();
+
+						  return true;
+					  }
+
+					  // TODO: 在 mysql 中查找用户是否存在
+
+					  JSON json_res;
+					  json_res.emplace( "error", 0 );
+					  json_res.emplace( "email", json_body[ "email" ].get<std::string>() );
+					  json_res.emplace( "user", json_body[ "user" ].get<std::string>() );
+					  json_res.emplace( "password", json_body[ "password" ].get<std::string>() ); 
+					  json_res.emplace( "verify_code", json_body[ "verify_code" ].get<std::string>() );
+					  beast::ostream( connection->response.body() ) << json_res.dump();
+					  
 					  return true;
 				  } );
 }

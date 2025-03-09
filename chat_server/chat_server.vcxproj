@@ -69,6 +69,7 @@
     <Import Project="boost_dev_sheet_debug.props" />
     <Import Project="..\server\resources\property\grpc_debug.props" />
     <Import Project="redis.props" />
+    <Import Project="mysql_connector.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -134,7 +135,6 @@
   <ItemGroup>
     <ClCompile Include="AsioIoContextPool.cpp" />
     <ClCompile Include="ConfigManager.cpp" />
-    <ClCompile Include="global.cpp" />
     <ClCompile Include="HttpConnection.cpp" />
     <ClCompile Include="LogicSystem.cpp" />
     <ClCompile Include="main.cpp" />

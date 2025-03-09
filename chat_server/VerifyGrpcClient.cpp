@@ -16,7 +16,7 @@ GetVerifyResponse VerifyGrpcClient::GetVerificationCode( const std::string& emai
 
 	if ( !status.ok() )
 	{
-		reply.set_error( static_cast<int>( EnumErrorCode::Error_RPC ) );
+		reply.set_error( static_cast<int>( EnumErrorCode::ErrorRpc ) );
 	}
 
 	connection_pool.ReturnConnection( std::move( stub ) );

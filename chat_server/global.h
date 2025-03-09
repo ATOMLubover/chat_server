@@ -32,7 +32,14 @@ using JSON = nlohmann::json;
 
 enum class EnumErrorCode : std::int32_t
 {
-	Success,
-	Error_Json = 1001,
-	Error_RPC = 1002
+	Success				= 0,
+	ErrorJson			= 1001,
+	ErrorRpc			= 1002,
+	ErrorRedisExpired	= 1003,
+	ErrorVerify         = 1004,
+	ErrorUserExisting   = 1005,
+	ErrorPwsWrong		= 1006,
+	ErrorEmailNotMatch  = 1007,
+	ErrorPwdUpdateFail  = 1008,
+	ErrorPwdInvaild		= 1009 
 };
