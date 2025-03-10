@@ -1,5 +1,7 @@
 #include "MySqlConnectionPool.h"
 
+#include "Defer.h"
+
 MySqlConnectionPool::MySqlConnectionPool( const MySqlConnectionInfo& info, int poolsize )
 	: login_info( info ), is_stopped( false ), size( poolsize )
 {
@@ -40,8 +42,11 @@ void MySqlConnectionPool::CheckConnections()
 	{
 		std::unique_ptr<MySqlConnection> conn = std::move( connections.front() );
 		connections.pop();
-
-		Defer defer;
+		// 在每次循环结束后自动回收（压回）取出的 conn
+		Defer defer( [this, &conn]
+					 {
+						 this->connections.push( std::move( conn ) );
+					 } );
 
 		// 如果上次查询时间在最近 5 秒之内，直接跳过
 		if ( sec_curr - conn->sec_last_oper < 5 )
@@ -59,7 +64,7 @@ void MySqlConnectionPool::CheckConnections()
 		{
 			std::cout << "error at keeping MySQL conn alive: " << exp.what() << std::endl;
 			// 创建新链接代替旧链接
-			
+			conn->Rebuild();
 		}
 	}
 }
@@ -80,7 +85,7 @@ std::unique_ptr<MySqlConnection> MySqlConnectionPool::TakeConnection()
 	if ( is_stopped )
 		return nullptr;
 
-	std::unique_ptr<MySqlConnection> conn = std::move( connections.front() );
+	std::unique_ptr<MySqlConnection> conn( std::move( connections.front() ) );
 	connections.pop();
 	return conn;
 }
@@ -89,9 +94,9 @@ void MySqlConnectionPool::ReturnConnection( std::unique_ptr<MySqlConnection>&& c
 {
 	std::unique_lock<std::mutex> lock( mtx_connections );
 
-	if ( is_stopped ) {
+	if ( is_stopped )
 		return;
-	}
+
 	connections.push( std::move( connection ) );
 	cv_connections.notify_one();
 }

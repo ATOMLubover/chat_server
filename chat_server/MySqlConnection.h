@@ -39,6 +39,7 @@ public:
 	~MySqlConnection()
 		= default;
 
+	// 重新建立一个新链接代替原链接
 	void Rebuild()
 	{
 		try
