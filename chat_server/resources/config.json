@@ -16,6 +16,7 @@
   "mysql": {
     "host": "127.0.0.1",
     "post": "3308",
+    "user": "root",
     "password": "248313",
     "schema": "chat"
   }

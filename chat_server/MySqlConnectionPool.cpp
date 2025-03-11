@@ -43,10 +43,7 @@ void MySqlConnectionPool::CheckConnections()
 		std::unique_ptr<MySqlConnection> conn = std::move( connections.front() );
 		connections.pop();
 		// 在每次循环结束后自动回收（压回）取出的 conn
-		Defer defer( [this, &conn]
-					 {
-						 this->connections.push( std::move( conn ) );
-					 } );
+		Defer defer( [this, &conn] { this->connections.push( std::move( conn ) ); } );
 
 		// 如果上次查询时间在最近 5 秒之内，直接跳过
 		if ( sec_curr - conn->sec_last_oper < 5 )

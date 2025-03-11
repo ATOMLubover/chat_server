@@ -4,6 +4,7 @@
 #include "VerifyGrpcClient.h"
 #include "RedisManager.h"
 #include "ConfigManager.h"
+#include "MySqlManager.h"
 
 void LogicSystem::RegisterGet( const std::string& name_handler, HttpHandler handler )
 {
@@ -22,7 +23,7 @@ bool LogicSystem::HandleGet( const std::string& url, std::shared_ptr<HttpConnect
 }
 
 void LogicSystem::RegisterPost( const std::string& name_handler, HttpHandler handler )
-{ 
+{
 	post_handlers.insert( std::make_pair( name_handler, handler ) );
 }
 
@@ -96,7 +97,7 @@ LogicSystem::LogicSystem()
 
 					  auto email = json_body[ "email" ].get<std::string>();
 					  // make VerificationClient to send vericode
-					  GetVerifyResponse veri_response 
+					  GetVerifyResponse veri_response
 						  = VerifyGrpcClient::GetInstance()->GetVerificationCode( email );
 
 					  json_res[ "error" ] = veri_response.error();
@@ -125,17 +126,23 @@ LogicSystem::LogicSystem()
 						  return true;
 					  }
 
+					  std::string name = json_body[ "user" ].get<std::string>();
+					  std::string email = json_body[ "email" ].get<std::string>();
+					  std::string pwd = json_body[ "password" ].get<std::string>();
+					  std::string verify_code_cli = json_body[ "verify_code" ].get<std::string>();
+
+					  JSON json_res;
+
 					  // 先查找 redis 中 email 对应的验证码是否合理
-					  std::string code_prefix 
+					  std::string code_prefix
 						  = ConfigManager::GetInstance()->GetValue( "const", "code_prefix" );
 					  std::string verify_code;
-					  bool is_verification_gotton 
+					  bool is_verification_gotton
 						  = RedisManager::GetInstance()->Get(
-							  code_prefix + json_body[ "email" ].get<std::string>(), 
+							  code_prefix + json_body[ "email" ].get<std::string>(),
 							  &verify_code );
 					  if ( !is_verification_gotton ) {
 						  std::cout << " get varify code expired" << std::endl;
-						  JSON json_res;
 						  json_res.emplace( "error", EnumErrorCode::ErrorRedisExpired );
 						  beast::ostream( connection->response.body() ) << json_res.dump();
 
@@ -143,25 +150,35 @@ LogicSystem::LogicSystem()
 					  }
 
 					  // 如果 redis 中的验证码与客户端传过来的不相同
-					  if ( verify_code != json_body[ "verify_code" ].get<std::string>() ) {
+					  if ( verify_code != verify_code_cli ) {
 						  std::cout << " verify code error" << std::endl;
-						  JSON json_res;
 						  json_res.emplace( "error", (int) EnumErrorCode::ErrorVerify );
 						  beast::ostream( connection->response.body() ) << json_res.dump();
 
 						  return true;
 					  }
 
-					  // TODO: 在 mysql 中查找用户是否存在
+					  // 在 mysql 中查找用户是否存在
+					  int uid = MySqlManager::GetInstance()->RegisterUser( name, email, pwd );
+					  if ( uid == 0 || uid == -1 )
+					  {
+						  std::cout 
+							  << std::format( "user: {}, email: {} exists", name, email ) 
+							  << std::endl;
+						  json_res.emplace( "error", EnumErrorCode::ErrorUserExisting );
+						  beast::ostream( connection->response.body() ) << json_res.dump();
 
-					  JSON json_res;
+						  return true;
+					  }
+
 					  json_res.emplace( "error", 0 );
-					  json_res.emplace( "email", json_body[ "email" ].get<std::string>() );
-					  json_res.emplace( "user", json_body[ "user" ].get<std::string>() );
-					  json_res.emplace( "password", json_body[ "password" ].get<std::string>() ); 
-					  json_res.emplace( "verify_code", json_body[ "verify_code" ].get<std::string>() );
+					  json_res.emplace( "uid", uid );
+					  json_res.emplace( "email", email );
+					  json_res.emplace( "user", name );
+					  json_res.emplace( "password", pwd );
+					  json_res.emplace( "verify_code", verify_code );
 					  beast::ostream( connection->response.body() ) << json_res.dump();
-					  
+
 					  return true;
 				  } );
 }

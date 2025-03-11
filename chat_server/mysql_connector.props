@@ -4,13 +4,16 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <IncludePath>D:\code_resources\thirdparty\mysql_connector\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\code_resources\thirdparty\mysql_connector\lib64\vs14;$(LibraryPath)</LibraryPath>
+    <LibraryPath>D:\code_resources\thirdparty\mysql_connector\lib64\vs14\debug;D:\code_resources\thirdparty\mysql_connector\lib64\vs14;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <PostBuildEvent>
       <Command>xcopy $(ProjectDir)config.json  $(SolutionDir)$(Platform)\$(Configuration)\   /y
 xcopy $(ProjectDir)*.dll   $(SolutionDir)$(Platform)\$(Configuration)\   /y</Command>
     </PostBuildEvent>
+    <Link>
+      <AdditionalDependencies>mysqlcppconn.lib;libcrypto.lib;libssl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>

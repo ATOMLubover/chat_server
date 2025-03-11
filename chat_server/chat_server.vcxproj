@@ -142,6 +142,7 @@
     <ClCompile Include="message.pb.cc" />
     <ClCompile Include="MySqlConnectionPool.cpp" />
     <ClCompile Include="MySqlDao.cpp" />
+    <ClCompile Include="MySqlManager.cpp" />
     <ClCompile Include="RedisConnectionPool.cpp" />
     <ClCompile Include="RedisManager.cpp" />
     <ClCompile Include="RpcConnectionPool.cpp" />
@@ -169,6 +170,7 @@
     <ClInclude Include="MySqlConnectionInfo.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="MySqlManager.h" />
     <ClInclude Include="RedisConnectionPool.h" />
     <ClInclude Include="RedisContext.h" />
     <ClInclude Include="RedisManager.h" />
