@@ -11,12 +11,12 @@ class MySqlManager
 public:
 	MySqlManager( const MySqlManager& ) = delete;
 	MySqlManager& operator=( const MySqlManager& ) = delete;
-	~MySqlManager() = default;
+	~MySqlManager();
 
 	int RegisterUser( const std::string& name, const std::string& email, const std::string& pwd );
 
 private:
-	MySqlManager() = default;
+	MySqlManager();
 
 private:
 	MySqlDao dao;

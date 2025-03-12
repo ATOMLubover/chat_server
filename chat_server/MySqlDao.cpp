@@ -45,8 +45,8 @@ int MySqlDao::RegisterUser( const std::string& name, const std::string& email, c
 		pstmt->execute();
 
 		// 调用执行语句，获得无法直接获得的 result
-		std::unique_ptr<sql::Statement> stmt( conn->connection->createStatement() );
-		std::unique_ptr<sql::ResultSet> res( stmt->executeQuery( "SELECT @result AS result" ) );
+		std::unique_ptr<sql::Statement> stmt_res( conn->connection->createStatement() );
+		std::unique_ptr<sql::ResultSet> res( stmt_res->executeQuery( "SELECT @result AS result" ) );
 		if ( res->next() )
 		{
 			int result = res->getInt( "result" );

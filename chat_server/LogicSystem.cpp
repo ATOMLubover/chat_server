@@ -139,10 +139,10 @@ LogicSystem::LogicSystem()
 					  std::string verify_code;
 					  bool is_verification_gotton
 						  = RedisManager::GetInstance()->Get(
-							  code_prefix + json_body[ "email" ].get<std::string>(),
+							  code_prefix + email,
 							  &verify_code );
 					  if ( !is_verification_gotton ) {
-						  std::cout << " get varify code expired" << std::endl;
+						  std::cout << "get varify code expired" << std::endl;
 						  json_res.emplace( "error", EnumErrorCode::ErrorRedisExpired );
 						  beast::ostream( connection->response.body() ) << json_res.dump();
 

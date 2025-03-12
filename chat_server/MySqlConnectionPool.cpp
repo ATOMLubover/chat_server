@@ -75,8 +75,8 @@ std::unique_ptr<MySqlConnection> MySqlConnectionPool::TakeConnection()
 						 {
 							 if ( this->is_stopped )
 								 return true;
-							 if ( !this->connections.empty() )
-								 return false;
+
+							 return !this->connections.empty();
 						 } );
 
 	if ( is_stopped )
