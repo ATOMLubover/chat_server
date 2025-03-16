@@ -5,6 +5,7 @@
 #include "RedisManager.h"
 #include "ConfigManager.h"
 #include "MySqlManager.h"
+#include "StatusGrpcClient.h"
 
 void LogicSystem::RegisterGet( const std::string& name_handler, HttpHandler handler )
 {
@@ -77,8 +78,7 @@ LogicSystem::LogicSystem()
 					  {
 						  std::cout << "json parse failed" << std::endl;
 
-						  json_res[ "Error" ] = EnumErrorCode::ErrorJson;
-						  json_res.emplace( JSON{ "email", json_body[ "email" ].get<std::string>() } );
+						  json_res.emplace( "error", EnumErrorCode::ErrorJson );
 						  beast::ostream( connection->response.body() ) << json_res.dump();
 
 						  return true; // not enough to throw false
@@ -191,6 +191,8 @@ LogicSystem::LogicSystem()
 					  connection->response.set( http::field::content_type, "text/json" );
 
 					  JSON json_body = JSON::parse( str_body );
+					  std::cout << "json_body is: " << json_body.dump( 4 ) << std::endl;
+
 					  if ( json_body.is_null() ) {
 						  std::cout << "Failed to parse JSON data!" << std::endl;
 						  JSON json_res;
@@ -200,18 +202,18 @@ LogicSystem::LogicSystem()
 						  return true;
 					  }
 
-					  std::string name = json_body[ "user" ].get<std::string>();
+					  std::string email = json_body[ "email" ].get<std::string>();
 					  std::string pwd = json_body[ "password" ].get<std::string>();
 
 					  JSON json_res;
 
 					  // 在 mysql 中查找密码是否正确
 					  UserInfo user_info;
-					  int is_pwd_valid = MySqlManager::GetInstance()->CheckPassword( name, pwd, &user_info );
+					  int is_pwd_valid = MySqlManager::GetInstance()->CheckPassword( email, pwd, &user_info );
 					  if ( !is_pwd_valid )
 					  {
 						  std::cout
-							  << std::format( "user: {} password wrong ", name )
+							  << std::format( "email: {} password wrong ", email )
 							  << std::endl;
 						  json_res.emplace( "error", EnumErrorCode::ErrorPwdInvaild );
 						  beast::ostream( connection->response.body() ) << json_res.dump();
@@ -229,6 +231,7 @@ LogicSystem::LogicSystem()
 					  }
 
 					  json_res.emplace( "error", 0 );
+					  json_res.emplace( "name", user_info.username );
 					  json_res.emplace( "uid", user_info.uid );
 					  json_res.emplace( "email", user_info.email );
 					  json_res.emplace( "token", reply.token() );

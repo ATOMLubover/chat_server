@@ -32,10 +32,8 @@ void HttpConnection::Start()
 						  }
 						  catch ( std::exception& e )
 						  {
-							  //logger.Log( Logger::EnumLevel::Warning,
-									//	  "exception({}) occured at HttpConnection Start() callback",
-									//	  e.what() );
-							  std::cout << "exception occured at HttpConnection Start() callback" << std::endl;
+							  std::cout << "exception occured at HttpConnection Start() callback: " 
+								  << e.what() << std::endl;
 						  }
 					  } );
 }

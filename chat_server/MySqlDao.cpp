@@ -96,6 +96,7 @@ bool MySqlDao::CheckEmail( const std::string& name, const std::string& email )
 			}
 			return true;
 		}
+		return false;
 	}
 	catch ( sql::SQLException& exp ) 
 	{
@@ -106,7 +107,7 @@ bool MySqlDao::CheckEmail( const std::string& name, const std::string& email )
 	}
 }
 
-bool MySqlDao::CheckPassword( const std::string& name, const std::string& pwd, UserInfo* info )
+bool MySqlDao::CheckPassword( const std::string& email, const std::string& pwd, UserInfo* info )
 {
 	auto conn = connection_pool->TakeConnection();
 	try 
@@ -123,9 +124,9 @@ bool MySqlDao::CheckPassword( const std::string& name, const std::string& pwd, U
 
 		// 准备查询语句
 		std::unique_ptr<sql::PreparedStatement> pstmt(
-			conn->connection->prepareStatement( "SELECT password FROM user WHERE name = ?" ) );
+			conn->connection->prepareStatement( "SELECT * FROM user WHERE email = ?" ) );
 		// 绑定参数
-		pstmt->setString( 1, name );
+		pstmt->setString( 1, email );
 		// 执行查询
 		std::unique_ptr<sql::ResultSet> res( pstmt->executeQuery() );
 

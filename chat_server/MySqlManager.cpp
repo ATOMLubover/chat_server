@@ -17,9 +17,9 @@ bool MySqlManager::CheckEmail( const std::string& name, const std::string& email
     return dao.CheckEmail( name, email );
 }
 
-bool MySqlManager::CheckPassword( const std::string& name, const std::string& pwd, UserInfo* info )
+bool MySqlManager::CheckPassword( const std::string& email, const std::string& pwd, UserInfo* info )
 {
-    return dao.CheckPassword( name, pwd, info );
+    return dao.CheckPassword( email, pwd, info );
 }
 
 MySqlManager::MySqlManager()
