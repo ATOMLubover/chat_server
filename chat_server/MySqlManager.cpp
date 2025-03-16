@@ -12,6 +12,16 @@ int MySqlManager::RegisterUser( const std::string& name, const std::string& emai
     return dao.RegisterUser( name, email, pwd );
 }
 
+bool MySqlManager::CheckEmail( const std::string& name, const std::string& email )
+{
+    return dao.CheckEmail( name, email );
+}
+
+bool MySqlManager::CheckPassword( const std::string& name, const std::string& pwd, UserInfo* info )
+{
+    return dao.CheckPassword( name, pwd, info );
+}
+
 MySqlManager::MySqlManager()
 { 
     std::cout << "MySqlManager constructed" << std::endl;

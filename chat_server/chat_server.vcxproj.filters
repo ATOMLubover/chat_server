@@ -39,7 +39,7 @@
     <ClCompile Include="AsioIoContextPool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="RpcConnectionPool.cpp">
+    <ClCompile Include="VerifyRpcConnectionPool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="RedisManager.cpp">
@@ -58,6 +58,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MySqlManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="StatusGrpcClient.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -89,7 +92,7 @@
     <ClInclude Include="AsioIoContextPool.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="RpcConnectionPool.h">
+    <ClInclude Include="VerifyRpcConnectionPool.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="RedisManager.h">
@@ -129,6 +132,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="MySqlManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="StatusGrpcClient.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,6 @@
-﻿#include "RpcConnectionPool.h"
+﻿#include "VerifyRpcConnectionPool.h"
 
-RpcConnectionPool::~RpcConnectionPool()
+VerifyRpcConnectionPool::~VerifyRpcConnectionPool()
 {
 	std::lock_guard<std::mutex> guard( mtx_connections );
 
@@ -9,7 +9,7 @@ RpcConnectionPool::~RpcConnectionPool()
 		connections.pop(); // 由于是智能指针，所以弹出后不用手动校徽
 }
 
-std::unique_ptr<message::VerifyService::Stub> RpcConnectionPool::TakeConnection()
+std::unique_ptr<message::VerifyService::Stub> VerifyRpcConnectionPool::TakeConnection()
 {
 	std::unique_lock<std::mutex> lock( mtx_connections );
 
@@ -31,7 +31,7 @@ std::unique_ptr<message::VerifyService::Stub> RpcConnectionPool::TakeConnection(
 	return std::move( stub );
 }
 
-void RpcConnectionPool::ReturnConnection( std::unique_ptr<message::VerifyService::Stub>&& connection )
+void VerifyRpcConnectionPool::ReturnConnection( std::unique_ptr<message::VerifyService::Stub>&& connection )
 {
 	std::lock_guard<std::mutex> guard( mtx_connections );
 
@@ -43,13 +43,13 @@ void RpcConnectionPool::ReturnConnection( std::unique_ptr<message::VerifyService
 	cv.notify_one(); // 如果有线程在等待取用，则有一个幸运儿可以获得
 }
 
-void RpcConnectionPool::ClosePool()
+void VerifyRpcConnectionPool::ClosePool()
 {
 	is_stopped = true;
 	cv.notify_all();
 }
 
-RpcConnectionPool::RpcConnectionPool( std::size_t size, std::string host, std::string port )
+VerifyRpcConnectionPool::VerifyRpcConnectionPool( std::size_t size, std::string host, std::string port )
 	: size( size ), host( host ), port( port )
 	, is_stopped( false )
 {

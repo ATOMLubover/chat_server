@@ -145,8 +145,9 @@
     <ClCompile Include="MySqlManager.cpp" />
     <ClCompile Include="RedisConnectionPool.cpp" />
     <ClCompile Include="RedisManager.cpp" />
-    <ClCompile Include="RpcConnectionPool.cpp" />
+    <ClCompile Include="VerifyRpcConnectionPool.cpp" />
     <ClCompile Include="Server.cpp" />
+    <ClCompile Include="StatusGrpcClient.cpp" />
     <ClCompile Include="VerifyGrpcClient.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -176,9 +177,10 @@
     <ClInclude Include="RedisManager.h" />
     <ClInclude Include="RedisReply.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="RpcConnectionPool.h" />
+    <ClInclude Include="VerifyRpcConnectionPool.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="Singleton.h" />
+    <ClInclude Include="StatusGrpcClient.h" />
     <ClInclude Include="UserInfo.h" />
     <ClInclude Include="VerifyGrpcClient.h" />
   </ItemGroup>

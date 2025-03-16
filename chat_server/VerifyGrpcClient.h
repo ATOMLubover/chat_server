@@ -1,7 +1,7 @@
 #pragma once
 
 #include "global.h"
-#include "RpcConnectionPool.h"
+#include "VerifyRpcConnectionPool.h"
 
 #include <grpcpp/grpcpp.h>
 #include "message.grpc.pb.h"
@@ -25,5 +25,5 @@ private:
 	VerifyGrpcClient();
 
 private:
-	RpcConnectionPool connection_pool;
+	VerifyRpcConnectionPool connection_pool;
 };

@@ -10,13 +10,13 @@
 #include <condition_variable>
 
 // 作为成员变量使用，而非管理类（内置锁）
-class RpcConnectionPool
+class VerifyRpcConnectionPool
 {
 public:
-	RpcConnectionPool( std::size_t size, std::string host, std::string port );
-	RpcConnectionPool( const RpcConnectionPool& ) = delete;
-	RpcConnectionPool& operator=( const  RpcConnectionPool& ) = delete;
-	~RpcConnectionPool();
+	VerifyRpcConnectionPool( std::size_t size, std::string host, std::string port );
+	VerifyRpcConnectionPool( const VerifyRpcConnectionPool& ) = delete;
+	VerifyRpcConnectionPool& operator=( const  VerifyRpcConnectionPool& ) = delete;
+	~VerifyRpcConnectionPool();
 
 	std::unique_ptr<message::VerifyService::Stub> TakeConnection();
 	void ReturnConnection( std::unique_ptr<message::VerifyService::Stub>&& connection );

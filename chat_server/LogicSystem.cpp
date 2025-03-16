@@ -162,8 +162,8 @@ LogicSystem::LogicSystem()
 					  int uid = MySqlManager::GetInstance()->RegisterUser( name, email, pwd );
 					  if ( uid == 0 || uid == -1 )
 					  {
-						  std::cout 
-							  << std::format( "user: {}, email: {} exists", name, email ) 
+						  std::cout
+							  << std::format( "user: {}, email: {} exists", name, email )
 							  << std::endl;
 						  json_res.emplace( "error", EnumErrorCode::ErrorUserExisting );
 						  beast::ostream( connection->response.body() ) << json_res.dump();
@@ -177,6 +177,63 @@ LogicSystem::LogicSystem()
 					  json_res.emplace( "user", name );
 					  json_res.emplace( "password", pwd );
 					  json_res.emplace( "verify_code", verify_code );
+					  beast::ostream( connection->response.body() ) << json_res.dump();
+
+					  return true;
+				  } );
+
+	RegisterPost( "/user_login",
+				  [] ( std::shared_ptr<HttpConnection> connection )
+				  {
+					  std::string str_body = boost::beast::buffers_to_string( connection->request.body().data() );
+					  std::cout << "receive body is " << str_body << std::endl;
+
+					  connection->response.set( http::field::content_type, "text/json" );
+
+					  JSON json_body = JSON::parse( str_body );
+					  if ( json_body.is_null() ) {
+						  std::cout << "Failed to parse JSON data!" << std::endl;
+						  JSON json_res;
+						  json_res.emplace( "error", EnumErrorCode::ErrorJson );
+						  beast::ostream( connection->response.body() ) << json_res.dump();
+
+						  return true;
+					  }
+
+					  std::string name = json_body[ "user" ].get<std::string>();
+					  std::string pwd = json_body[ "password" ].get<std::string>();
+
+					  JSON json_res;
+
+					  // 在 mysql 中查找密码是否正确
+					  UserInfo user_info;
+					  int is_pwd_valid = MySqlManager::GetInstance()->CheckPassword( name, pwd, &user_info );
+					  if ( !is_pwd_valid )
+					  {
+						  std::cout
+							  << std::format( "user: {} password wrong ", name )
+							  << std::endl;
+						  json_res.emplace( "error", EnumErrorCode::ErrorPwdInvaild );
+						  beast::ostream( connection->response.body() ) << json_res.dump();
+
+						  return true;
+					  }
+
+					  //查询 StatusServer 找到合适的连接
+					  auto reply = StatusGrpcClient::GetInstance()->GetChatServer( user_info.uid );
+					  if ( reply.error() ) {
+						  std::cout << " grpc get chat server failed, error is " << reply.error() << std::endl;
+						  json_res.emplace( "error", EnumErrorCode::ErrorRpc );
+						  beast::ostream( connection->response.body() ) << json_res.dump();
+						  return true;
+					  }
+
+					  json_res.emplace( "error", 0 );
+					  json_res.emplace( "uid", user_info.uid );
+					  json_res.emplace( "email", user_info.email );
+					  json_res.emplace( "token", reply.token() );
+					  json_res.emplace( "host", reply.host() );
+					  json_res.emplace( "port", reply.port() );
 					  beast::ostream( connection->response.body() ) << json_res.dump();
 
 					  return true;
